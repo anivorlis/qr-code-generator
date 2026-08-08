@@ -22,17 +22,60 @@
       </button>
     </header>
 
-    <form id="qr-form" class="input-row">
-      <input
-        type="text"
-        id="url-input"
-        placeholder="Enter a URL, e.g. https://example.com"
-        autocomplete="off"
-        required
-      />
+    <form id="qr-form" class="qr-form">
+      <label class="mode-label">
+        <span>Type</span>
+        <select id="mode">
+          <option value="url" selected>URL</option>
+          <option value="text">Text</option>
+          <option value="wifi">Wi-Fi</option>
+          <option value="email">Email</option>
+          <option value="vcard">Contact (vCard)</option>
+        </select>
+      </label>
+
+      <fieldset class="mode-fields" data-mode="url">
+        <input type="text" id="url-input" placeholder="https://example.com" autocomplete="off" required />
+      </fieldset>
+
+      <fieldset class="mode-fields" data-mode="text" hidden disabled>
+        <textarea id="text-input" rows="3" placeholder="Any text to encode" required></textarea>
+      </fieldset>
+
+      <fieldset class="mode-fields" data-mode="wifi" hidden disabled>
+        <input type="text" id="wifi-ssid" placeholder="Network name (SSID)" autocomplete="off" required />
+        <input type="text" id="wifi-password" placeholder="Password" autocomplete="off" required />
+        <div class="field-row">
+          <select id="wifi-security">
+            <option value="WPA" selected>WPA/WPA2</option>
+            <option value="WEP">WEP</option>
+            <option value="nopass">No password</option>
+          </select>
+          <label class="checkbox">
+            <input type="checkbox" id="wifi-hidden" />
+            Hidden network
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mode-fields" data-mode="email" hidden disabled>
+        <input type="email" id="email-to" placeholder="Recipient email" autocomplete="off" required />
+        <input type="text" id="email-subject" placeholder="Subject (optional)" autocomplete="off" />
+        <textarea id="email-body" rows="2" placeholder="Message (optional)"></textarea>
+      </fieldset>
+
+      <fieldset class="mode-fields" data-mode="vcard" hidden disabled>
+        <input type="text" id="vcard-name" placeholder="Full name" autocomplete="off" required />
+        <input type="tel" id="vcard-phone" placeholder="Phone (optional)" autocomplete="off" />
+        <input type="email" id="vcard-email" placeholder="Email (optional)" autocomplete="off" />
+        <input type="text" id="vcard-org" placeholder="Company (optional)" autocomplete="off" />
+        <input type="text" id="vcard-url" placeholder="Website (optional)" autocomplete="off" />
+      </fieldset>
+
       <button type="submit" id="generate-btn" class="primary-btn">Generate</button>
     </form>
 
+    <p id="warning-msg" class="warning hidden"></p>
     <p id="error-msg" class="error hidden"></p>
 
     <div id="qr-container" class="qr-container">
@@ -62,6 +105,13 @@
         </svg>
         Download
       </button>
+      <button id="link-btn" class="secondary-btn" disabled title="Copy a URL that regenerates this QR code (logo not included)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        Copy link
+      </button>
     </div>
   </main>
 
@@ -86,7 +136,29 @@
         <input type="range" id="border" min="0" max="10" value="4" />
         <output id="border-value">4</output>
       </label>
+      <label>
+        Error correction
+        <select id="error-level">
+          <option value="l">L — low (7%)</option>
+          <option value="m" selected>M — medium (15%)</option>
+          <option value="q">Q — quartile (25%)</option>
+          <option value="h">H — high (30%)</option>
+        </select>
+      </label>
+      <label>
+        Format
+        <select id="format">
+          <option value="png" selected>PNG</option>
+          <option value="svg">SVG</option>
+        </select>
+      </label>
+      <label class="logo-row">
+        Logo (optional)
+        <input type="file" id="logo-input" accept="image/*" />
+      </label>
+      <p class="hint">A logo forces PNG output and high error correction.</p>
       <div class="settings-actions">
+        <button type="button" id="logo-clear" class="link-btn hidden">Remove logo</button>
         <button type="submit" class="primary-btn">Done</button>
       </div>
     </form>

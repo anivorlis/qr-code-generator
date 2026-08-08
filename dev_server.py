@@ -9,7 +9,7 @@ import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from api.generate import make_qr_png
+from api.generate import MAX_BODY_BYTES, generate_qr
 
 PORT = 3000
 
@@ -20,38 +20,45 @@ class DevHandler(SimpleHTTPRequestHandler):
         if parsed.path != "/api/generate":
             super().do_GET()
             return
+        query = parse_qs(parsed.query)
+        self._api({k: v[0] for k, v in query.items()})
 
-        params = parse_qs(parsed.query)
-
-        def param(name, default):
-            return params.get(name, [default])[0]
-
-        data = param("url", "").strip()
-        if not data:
-            self._send_json(400, {"error": "Missing 'url' query parameter"})
+    def do_POST(self):
+        if urlparse(self.path).path != "/api/generate":
+            self._send_json(404, {"error": "Not found"})
             return
-        if len(data) > 2000:
-            self._send_json(400, {"error": "URL is too long (max 2000 characters)"})
-            return
-
         try:
-            png = make_qr_png(
-                data,
-                dark=param("dark", "#000000"),
-                light=param("light", "#ffffff"),
-                scale=param("scale", "10"),
-                border=param("border", "4"),
-            )
+            length = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            length = 0
+        if length <= 0:
+            self._send_json(400, {"error": "Missing request body"})
+            return
+        if length > MAX_BODY_BYTES:
+            self._send_json(413, {"error": "Request body too large"})
+            return
+        try:
+            params = json.loads(self.rfile.read(length))
+        except (ValueError, UnicodeDecodeError):
+            self._send_json(400, {"error": "Request body must be valid JSON"})
+            return
+        if not isinstance(params, dict):
+            self._send_json(400, {"error": "Request body must be a JSON object"})
+            return
+        self._api(params)
+
+    def _api(self, params):
+        try:
+            body, content_type = generate_qr(params)
         except ValueError as exc:
             self._send_json(400, {"error": str(exc)})
             return
-
         self.send_response(200)
-        self.send_header("Content-Type", "image/png")
-        self.send_header("Content-Length", str(len(png)))
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(png)
+        self.wfile.write(body)
 
     def _send_json(self, status, payload):
         body = json.dumps(payload).encode()

@@ -73,31 +73,98 @@ h1 {
   transform: rotate(45deg);
 }
 
-.input-row {
+/* ---------- form ---------- */
+
+.qr-form {
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-#url-input {
+.mode-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.mode-label select {
   flex: 1;
+}
+
+.mode-fields {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   min-width: 0;
-  padding: 0.65rem 0.9rem;
+}
+
+.mode-fields[hidden] {
+  display: none;
+}
+
+.qr-form input[type="text"],
+.qr-form input[type="email"],
+.qr-form input[type="tel"],
+.qr-form textarea,
+.qr-form select {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 0.95rem;
+  font-family: inherit;
   color: var(--text);
   background: var(--surface);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-#url-input::placeholder {
+.qr-form textarea {
+  resize: vertical;
+}
+
+.qr-form input::placeholder,
+.qr-form textarea::placeholder {
   color: #94a3b8;
 }
 
-#url-input:focus {
+.qr-form input:focus,
+.qr-form textarea:focus,
+.qr-form select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.qr-form input:disabled {
+  background: var(--surface-soft);
+  color: var(--text-muted);
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.field-row select {
+  flex: 1;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.checkbox input {
+  accent-color: var(--accent);
 }
 
 .primary-btn {
@@ -130,6 +197,14 @@ h1 {
   font-size: 0.85rem;
   margin-top: 0.75rem;
 }
+
+.warning {
+  color: #b45309;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+/* ---------- QR display ---------- */
 
 .qr-container {
   margin: 1.5rem 0;
@@ -176,6 +251,8 @@ h1 {
   }
 }
 
+/* ---------- actions ---------- */
+
 .actions {
   display: flex;
   gap: 0.5rem;
@@ -186,16 +263,20 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
   background: var(--surface-soft);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.6rem;
-  font-size: 0.92rem;
+  padding: 0.6rem 0.4rem;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.secondary-btn svg {
+  flex-shrink: 0;
 }
 
 .secondary-btn:hover:not(:disabled) {
@@ -212,13 +293,16 @@ h1 {
   display: none !important;
 }
 
+/* ---------- settings dialog ---------- */
+
 dialog {
+  margin: auto;
   border: none;
   border-radius: 14px;
   box-shadow: 0 8px 40px rgba(15, 23, 42, 0.25);
   padding: 1.5rem;
   width: 90%;
-  max-width: 340px;
+  max-width: 360px;
 }
 
 dialog::backdrop {
@@ -257,6 +341,16 @@ dialog::backdrop {
   accent-color: var(--accent);
 }
 
+.settings-form select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--surface);
+}
+
 .settings-form output {
   min-width: 1.5rem;
   text-align: right;
@@ -264,8 +358,44 @@ dialog::backdrop {
   color: var(--text-muted);
 }
 
+.logo-row {
+  flex-wrap: wrap;
+}
+
+.settings-form input[type="file"] {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  max-width: 200px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.9rem;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
 .settings-actions {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-top: 0.5rem;
+}
+
+.settings-actions .primary-btn {
+  margin-left: auto;
 }
