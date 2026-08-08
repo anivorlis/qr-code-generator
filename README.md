@@ -61,18 +61,18 @@ python dev_server.py
 
 1. Push this repository to GitHub.
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repository.
-3. Set **Framework Preset** to **Other**, keep the rest default, and click
-   **Deploy**.
+3. Keep the default settings and click **Deploy**.
 
 Vercel serves the static files from the repository root and turns
 `api/generate.py` into a serverless function at `/api/generate`, installing
 the dependencies declared in `pyproject.toml`.
 
-> **Important:** do not add a `[tool.vercel] entrypoint` section to
-> `pyproject.toml`. That tells Vercel to treat the repo as a single Python
-> *application* and routes **every** path (including `/`) to the function —
-> which means visitors see a JSON error instead of the page. Without it,
-> Vercel serves `index.html` at `/` and the function at `/api/generate`.
+> **Important:** `vercel.json` pins `"framework": null` (the "Other" preset).
+> Without it, Vercel's Python framework detection treats the repo as a single
+> Python *application* — it either fails the build asking for a
+> `[tool.vercel] entrypoint`, or (if you add one) routes **every** path
+> including `/` to the function, so visitors see a JSON error instead of the
+> page. Do not add an `entrypoint` section to `pyproject.toml`.
 
 ## API
 
