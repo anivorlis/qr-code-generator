@@ -2,6 +2,7 @@ const form = document.getElementById("qr-form");
 const urlInput = document.getElementById("url-input");
 const generateBtn = document.getElementById("generate-btn");
 const errorMsg = document.getElementById("error-msg");
+const qrContainer = document.getElementById("qr-container");
 const placeholder = document.getElementById("qr-placeholder");
 const qrImage = document.getElementById("qr-image");
 const copyBtn = document.getElementById("copy-btn");
@@ -67,6 +68,7 @@ form.addEventListener("submit", async (event) => {
     qrImage.src = URL.createObjectURL(currentBlob);
     qrImage.classList.remove("hidden");
     placeholder.classList.add("hidden");
+    qrContainer.classList.add("has-qr");
     copyBtn.disabled = false;
     downloadBtn.disabled = false;
   } catch (err) {

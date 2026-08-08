@@ -1,7 +1,3 @@
-# /// script
-# requires-python = ">=3.9"
-# dependencies = ["segno==1.6.6"]
-# ///
 """Local development server.
 
 Serves the static frontend and routes /api/generate to the same QR logic

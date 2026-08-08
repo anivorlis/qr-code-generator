@@ -1,16 +1,17 @@
 # QR Code Generator
 
 A small web app that turns a URL into a QR code. Static HTML/CSS/JS frontend,
-Python serverless backend (deployable on Vercel).
+Python serverless backend, deployable on [Vercel](https://vercel.com).
 
 ## Features
 
-- Enter a URL and generate a QR code (PNG)
-- Settings popup: foreground color, background color, size, border
-- Copy the QR code to the clipboard or download it as a PNG
+- Enter a URL, press **Generate**, get a QR code (PNG)
+- Settings popup (gear icon): foreground color, background color, size, border
+- **Copy** the QR code to the clipboard or **Download** it as a PNG
 
 The only dependency is [segno](https://pypi.org/project/segno/), a pure-Python
-QR code library with no dependencies of its own.
+QR code library with no dependencies of its own. The frontend is vanilla
+HTML/CSS/JS — no frameworks, no build step.
 
 ## Project structure
 
@@ -21,13 +22,13 @@ QR code library with no dependencies of its own.
 ├── api/
 │   └── generate.py   # Vercel serverless function (QR generation)
 ├── dev_server.py     # Local dev server (stdlib only)
-└── requirements.txt  # Python dependencies (segno)
+└── pyproject.toml    # Project metadata + dependencies (segno)
 ```
 
-## Test locally
+## Run locally
 
-Requires [uv](https://docs.astral.sh/uv/) (it fetches Python and the
-dependency automatically):
+Requires [uv](https://docs.astral.sh/uv/getting-started/installation/) — it
+fetches a compatible Python and installs the dependency automatically:
 
 ```bash
 uv run dev_server.py
@@ -35,8 +36,20 @@ uv run dev_server.py
 
 Then open <http://localhost:3000> in your browser.
 
-`requirements.txt` is kept for Vercel, which uses it to install dependencies
-for the serverless function.
+The dev server serves the static files and routes `/api/generate` to the same
+QR logic used by the Vercel function, so local behavior matches production.
+
+<details>
+<summary>Without uv (plain pip)</summary>
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate   # on Windows: .venv\Scripts\activate
+pip install segno==1.6.6
+python dev_server.py
+```
+
+</details>
 
 Alternatively, if you have the [Vercel CLI](https://vercel.com/docs/cli)
 installed, `vercel dev` runs the app exactly as it runs in production.
@@ -49,7 +62,7 @@ installed, `vercel dev` runs the app exactly as it runs in production.
 
 Vercel serves the static files from the repository root and automatically
 turns `api/generate.py` into a serverless function at `/api/generate`,
-installing `requirements.txt` for it.
+installing the dependencies declared in `pyproject.toml`.
 
 ## API
 
@@ -62,3 +75,9 @@ installing `requirements.txt` for it.
 | `light`     | `#ffffff` | Background color (hex)               |
 | `scale`     | `10`      | Pixels per QR module (1–40)          |
 | `border`    | `4`       | Quiet-zone width in modules (0–20)   |
+
+Example:
+
+```bash
+curl "http://localhost:3000/api/generate?url=https://example.com&dark=%231a3d8f&scale=8" -o qr.png
+```
